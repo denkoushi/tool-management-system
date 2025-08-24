@@ -61,5 +61,11 @@ python app_flask.py
 3. 工具タグをかざす  
 4. 自動的に貸出/返却処理が完了
 
+## 📖 詳細ドキュメント
+
+- [初期セットアップガイド](./SETUP.md)
+- [自動起動設定ガイド](./AUTO_START.md)
+- **[🎯 Raspberry Pi自動起動 - 実践成功事例](./docs/RASPBERRY_PI_AUTO_START_SUCCESS.md)** - 2025年8月実環境での動作確認済み手順
+
 ## 📝 ライセンス
 MIT License

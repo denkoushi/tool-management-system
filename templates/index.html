@@ -498,6 +498,20 @@
         <div id="registration" class="tab-content">
             <h2>🔖 タグ登録</h2>
             
+<!-- タグ情報確認セクション -->
+            <div style="margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #17a2b8;">
+                <h3>🔍 タグ情報確認</h3>
+                <p style="margin-bottom: 15px; color: #6c757d; font-size: 14px;">
+                    NFCタグをスキャンして、現在の登録状況を確認できます
+                </p>
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <button class="btn btn-primary" onclick="checkTagInfo()" style="background: #17a2b8; border-color: #17a2b8;">
+                        🔍 タグ情報を確認
+                    </button>
+                </div>
+                <div id="tagCheckResult"></div>
+            </div>
+            
             <div style="display: flex; gap: 30px; flex-wrap: wrap;">
                 <!-- ユーザー登録 -->
                 <div style="flex: 1; min-width: 300px;">

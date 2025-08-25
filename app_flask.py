@@ -439,6 +439,46 @@ def delete_tool_name_api():
     finally:
         conn.close()
 
+@app.route('/api/check_tag', methods=['POST'])
+def check_tag():
+    """タグ情報確認用API"""
+    print("📡 タグ情報確認スキャン実行中...")
+    uid = read_one_uid(timeout=5)
+    if uid:
+        print(f"✅ タグ情報確認成功: {uid}")
+        
+        conn = get_conn()
+        try:
+            # ユーザー情報確認
+            with conn.cursor() as cur:
+                cur.execute("SELECT full_name FROM users WHERE uid=%s", (uid,))
+                user_result = cur.fetchone()
+                
+                cur.execute("SELECT name FROM tools WHERE uid=%s", (uid,))
+                tool_result = cur.fetchone()
+            
+            result = {"uid": uid, "status": "success"}
+            
+            if user_result:
+                result["type"] = "user"
+                result["name"] = user_result[0]
+                result["message"] = f"👤 ユーザー: {user_result[0]}"
+            elif tool_result:
+                result["type"] = "tool" 
+                result["name"] = tool_result[0]
+                result["message"] = f"🛠️ 工具: {tool_result[0]}"
+            else:
+                result["type"] = "unregistered"
+                result["name"] = ""
+                result["message"] = "❓ 未登録のタグです"
+                
+            return jsonify(result)
+        finally:
+            conn.close()
+    else:
+        print("❌ タグ情報確認 タイムアウト")
+        return jsonify({"uid": None, "status": "timeout"})
+
 # =========================
 # 初期化・起動
 # =========================

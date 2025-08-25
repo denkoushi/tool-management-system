@@ -948,6 +948,53 @@
             showMessage('scanMessage', data.message, 'danger');
         });
         
+        // タグ情報確認
+        function checkTagInfo() {
+            showMessage('tagCheckResult', '📡 タグをスキャンしています...', 'info');
+            fetch('/api/check_tag', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        let messageType;
+                        let detailMessage;
+                        
+                        if (data.type === 'user') {
+                            messageType = 'success';
+                            detailMessage = `
+                                <div style="padding: 10px; background: white; border-radius: 5px; margin-top: 10px;">
+                                    <strong>🆔 UID:</strong> ${data.uid}<br>
+                                    <strong>📝 登録タイプ:</strong> ユーザー<br>
+                                    <strong>👤 氏名:</strong> ${data.name}
+                                </div>
+                            `;
+                        } else if (data.type === 'tool') {
+                            messageType = 'info';
+                            detailMessage = `
+                                <div style="padding: 10px; background: white; border-radius: 5px; margin-top: 10px;">
+                                    <strong>🆔 UID:</strong> ${data.uid}<br>
+                                    <strong>📝 登録タイプ:</strong> 工具<br>
+                                    <strong>🛠️ 工具名:</strong> ${data.name}
+                                </div>
+                            `;
+                        } else {
+                            messageType = 'warning';
+                            detailMessage = `
+                                <div style="padding: 10px; background: white; border-radius: 5px; margin-top: 10px;">
+                                    <strong>🆔 UID:</strong> ${data.uid}<br>
+                                    <strong>📝 登録状況:</strong> 未登録<br>
+                                    <em>このタグはまだユーザーまたは工具として登録されていません</em>
+                                </div>
+                            `;
+                        }
+                        
+                        document.getElementById('tagCheckResult').innerHTML = 
+                            `<div class="alert alert-${messageType}">${data.message}${detailMessage}</div>`;
+                    } else {
+                        showMessage('tagCheckResult', '❌ 読み取りタイムアウト（タグを一度離して再タッチ）', 'danger');
+                    }
+                });
+        }
+        
         // ページ読み込み時の初期化
         document.addEventListener('DOMContentLoaded', function() {
             loadLoansData();

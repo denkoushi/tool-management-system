@@ -53,7 +53,7 @@
             background: none;
             border: none;
             cursor: pointer;
-            font-size: clamp(12px, 2vh, 16px);
+            font-size: clamp(16px, 3vh, 22px);
             font-weight: 600;
             color: rgba(255, 255, 255, 0.8);
             transition: all 0.3s ease;
@@ -103,7 +103,7 @@
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            font-size: clamp(12px, 2vh, 16px);
+            font-size: clamp(36px, 8vh, 52px);
             font-weight: 600;
             transition: all 0.2s ease;
             flex: 1;
@@ -209,7 +209,7 @@
             border: 2px solid #e9ecef;
             border-radius: 5px;
             padding: min(6px, 1vh);
-            font-size: clamp(11px, 1.8vh, 14px);
+            font-size: clamp(24px, 4.5vh, 33px);
             min-height: max(32px, 5vh);
             display: flex;
             align-items: center;
@@ -285,7 +285,7 @@
             border: 1px solid #dee2e6;
             border-radius: 5px;
             overflow: hidden;
-            font-size: clamp(11px, 1.8vh, 14px);
+            font-size: clamp(24px, 4.5vh, 33px);
         }
         
         .data-table th {
@@ -430,13 +430,13 @@
             
             <div class="button-row">
                 <button class="btn btn-primary" id="startScanBtn" onclick="startScan()">
-                    🟢 スキャン開始
+                    スキャン開始
                 </button>
                 <button class="btn btn-secondary" id="stopScanBtn" onclick="stopScan()" disabled>
-                    🔴 停止
+                    停止
                 </button>
                 <button class="btn btn-danger" onclick="resetState()">
-                    🧹 リセット
+                    リセット
                 </button>
             </div>
             
@@ -511,13 +511,13 @@
                 </div>
                 <div id="tagCheckResult"></div>
             </div>
-            
+
             <div style="display: flex; gap: 30px; flex-wrap: wrap;">
                 <!-- ユーザー登録 -->
                 <div style="flex: 1; min-width: 300px;">
                     <h3>👤 ユーザー登録</h3>
                     <div class="input-group" style="margin-bottom: 15px;">
-                        <button class="btn btn-primary" onclick="scanForUser()">🧑 スキャンしてUID取得</button>
+                        <button class="btn btn-primary" onclick="scanForUser()">スキャンしてUID取得</button>
                     </div>
                     <div class="input-group" style="margin-bottom: 15px;">
                         <label>UID（自動入力）</label>
@@ -535,7 +535,7 @@
                 <div style="flex: 1; min-width: 300px;">
                     <h3>🛠 工具登録</h3>
                     <div class="input-group" style="margin-bottom: 15px;">
-                        <button class="btn btn-primary" onclick="scanForTool()">🔧 スキャンしてUID取得</button>
+                        <button class="btn btn-primary" onclick="scanForTool()">スキャンしてUID取得</button>
                     </div>
                     <div class="input-group" style="margin-bottom: 15px;">
                         <label>UID（自動入力）</label>
@@ -657,7 +657,7 @@
             
             if (active) {
                 statusElement.className = 'status-indicator status-active';
-                statusElement.innerHTML = '● スキャン中';
+                statusElement.innerHTML = 'スキャン中';
                 startBtn.disabled = true;
                 stopBtn.disabled = false;
             } else {
@@ -739,7 +739,7 @@
         
         // 手動スキャン（ユーザー登録用）
         function scanForUser() {
-            showMessage('userRegResult', '📡 スキャン中...', 'info');
+            showMessage('userRegResult', 'スキャン中...', 'info');
             fetch('/api/scan_tag', { method: 'POST' })
                 .then(response => response.json())
                 .then(data => {
@@ -754,7 +754,7 @@
         
         // 手動スキャン（工具登録用）
         function scanForTool() {
-            showMessage('toolRegResult', '📡 スキャン中...', 'info');
+            showMessage('toolRegResult', 'スキャン中...', 'info');
             fetch('/api/scan_tag', { method: 'POST' })
                 .then(response => response.json())
                 .then(data => {
@@ -948,9 +948,9 @@
             showMessage('scanMessage', data.message, 'danger');
         });
         
-        // タグ情報確認
+// タグ情報確認
         function checkTagInfo() {
-            showMessage('tagCheckResult', '📡 タグをスキャンしています...', 'info');
+            showMessage('tagCheckResult', 'タグをスキャンしています...', 'info');
             fetch('/api/check_tag', { method: 'POST' })
                 .then(response => response.json())
                 .then(data => {
@@ -994,7 +994,7 @@
                     }
                 });
         }
-        
+
         // ページ読み込み時の初期化
         document.addEventListener('DOMContentLoaded', function() {
             loadLoansData();

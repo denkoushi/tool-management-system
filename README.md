@@ -43,6 +43,63 @@ python app_flask.py
 - **データベース**: PostgreSQL (Docker)
 - **ハードウェア**: NFCリーダー (PC/SC対応)
 
+## 🏭 実環境での重要な注意事項
+
+**⚠️ 実装時の重要な相違点**
+
+このリポジトリは標準的な環境用に記載されていますが、実際の動作確認は以下の特別な環境で行われています。
+
+### **環境の違い**
+
+| 項目 | 📖 ドキュメント記載 | 🖥️ 実際の動作環境 |
+|------|-------------------|------------------|
+| **プロジェクトフォルダ名** | `tool-management-system` | `pgraf` |
+| **PostgreSQLコンテナ名** | `postgres-tool` | `pg` |
+| **フォルダパス** | `/home/user/tool-management-system` | `/home/denkon5/pgraf` |
+| **ユーザー名** | `user` | `denkon5` |
+
+### **実装時の対応方法**
+
+**新規環境構築の場合：**
+- 📚 このドキュメント通りに実装してください
+- 標準的な名称（`tool-management-system`, `postgres-tool`）を使用
+
+**既存環境への適用の場合：**
+- 🔧 環境に合わせてコマンドのフォルダ名・コンテナ名を読み替えてください
+- 例：`cd ~/tool-management-system` → `cd ~/pgraf`
+
+### **詳細な実環境情報**
+
+📋 **実際に動作確認済みの詳細な手順については以下を参照：**
+- **[🎯 Raspberry Pi自動起動 - 実践成功事例](./docs/RASPBERRY_PI_AUTO_START_SUCCESS.md)** - 実環境での完全な設定手順
+- **[🌐 オフライン対応設定ガイド](./OFFLINE_SETUP.md)** - インターネット未接続環境での動作設定
+
+### **フォルダ構成の実例**
+
+**実際のRaspberry Pi環境：**
+```
+/home/denkon5/pgraf/
+├── 📂 __pycache__/
+├── 📂 static/
+│   └── 📂 js/
+│       └── socket.io.js     ← オフライン対応
+├── 📂 templates/
+│   └── index.html
+├── 📂 venv/
+├── 📄 app_flask.py
+├── 📄 docker-compose.yml
+└── 📄 setup_auto_start.sh
+```
+
+**PostgreSQL関連：**
+```bash
+# 実環境でのコンテナ確認
+docker ps | grep pg    # "postgres-tool" ではなく "pg"
+
+# 実環境での自動起動設定  
+docker update --restart unless-stopped pg    # コンテナ名が "pg"
+```
+
 ## 📋 前提条件
 - Docker (PostgreSQL用)
 - NFCリーダー

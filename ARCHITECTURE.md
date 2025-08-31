@@ -83,3 +83,44 @@ while True:
 - 貸出/返却の自動判定: `app_flask.py:232-239`
 - UI更新（Socket.IO emit）: `app_flask.py:218-247`
 
+## ダッシュボード（将来拡張）
+目的: 運用状況を一目で把握し、異常の早期発見と現場改善に役立てる。
+
+- 可視化対象（例）
+  - 貸出中点数/未返却率（しきい値超え件数）
+  - 端末ステータス（stationごとの最終スキャン時刻/心拍）
+  - スキャン件数の推移（5分/時/日）
+  - 利用上位の工具/ユーザー（過去30日）
+  - 最新アラート（通信断/DB未達/スキャンエラー）
+
+- データソース
+  - `loans`（未返却の把握、返却時間差の算出）
+  - `scan_events`（端末心拍、スキャン量の可視化、稼働率推定）
+
+- 代表クエリ（例）
+  - 貸出中点数: `SELECT COUNT(*) FROM loans WHERE returned_at IS NULL;`
+  - 端末心拍: `SELECT station_id, MAX(ts) AS last_seen FROM scan_events GROUP BY station_id;`
+  - 5分間のスキャン件数: `SELECT date_trunc('minute', ts) AS m, COUNT(*) FROM scan_events WHERE ts > now() - interval '1 hour' GROUP BY m ORDER BY m;`
+  - 上位工具: `SELECT COALESCE(t.name, l.tool_uid) tool, COUNT(*) c FROM loans l LEFT JOIN tools t ON t.uid=l.tool_uid GROUP BY tool ORDER BY c DESC LIMIT 10;`
+
+- 実装アプローチ
+  - API: `/api/metrics`（JSONで上記指標を返す）
+  - UI: 既存画面に「ダッシュボード」タブを追加（カード＋簡易チャート）
+  - 集計: 初期は生SQLでOK。必要に応じてビュー/マテビューで最適化
+  - 端末別可視化: `scan_events.station_id` を軸にテーブル/カード表示
+
+- アラート（段階導入）
+  - 心拍閾値（例: 最終スキャン>5分）で「要確認」表示
+  - 未返却しきい値（例: 24h超）で強調表示
+  - 将来: Slack/Webhook連携を追加
+
+## NFCリーダー（RC‑S300/S1, Sony PaSoRi 4.0）
+- 接続方式: PC/SC（`pcscd` + `pyscard`）で動作確認済み
+- 取得方法: `FF CA 00 00 00` によりUID/IDmを取得する実装（`read_one_uid()`）
+- 運用メモ:
+  - 旧機種に比べPython向けライブラリの情報は少ないが、PC/SC経由で安定運用可能
+  - 公式SDKの存在は認識。現状はPC/SC標準での実装を採用（移植性/保守性優先）
+  - 認識不良時は `pcsc_scan` でReader/タグの反応を確認し、`pcscd` の再起動を実施
+  - 端末差がある場合は `GET DATA` 取得の可否/戻り値差異をフィールドノートに記録
+
+参考ドキュメント: `SETUP.md`（RC‑S300/S1の設定/確認手順）、`docs/RASPBERRY_PI_AUTO_START_SUCCESS.md`（実機での成功手順/注意点）

@@ -29,7 +29,7 @@ Type=simple
 User=$USER
 WorkingDirectory=/home/$USER/tool-management-system
 Environment=PATH=/home/$USER/tool-management-system/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ExecStart=/home/$USER/tool-management-system/venv/bin/python app_flask.py
+ExecStart=/home/$USER/tool-management-system/venv/bin/python -m app.main
 Restart=always
 RestartSec=10
 
@@ -68,4 +68,3 @@ chmod +x ~/tool-management-system/start_browser.sh
 - 状態確認: `sudo systemctl status tool-management.service`
 - ログ確認: `sudo journalctl -u tool-management.service -f`
 - 停止/再起動: `sudo systemctl stop|restart tool-management.service`
-

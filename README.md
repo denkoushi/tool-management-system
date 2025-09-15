@@ -9,14 +9,22 @@ Raspberry Pi + NFC + Flask + PostgreSQL で、工具の貸出/返却をリアル
 - 🌐 オフラインでも動作（Socket.IOクライアントをローカル配備）
 
 ## 構成（概要）
-- `app_flask.py`: Flask + Flask‑SocketIO サーバ（PC/SC経由でNFC UIDを取得、PostgreSQLへ記録）
-- `templates/index.html`: 操作用Web UI（レスポンシブ）
+- `app/` パッケージ（リファクタ済み）
+  - `app/main.py`: エントリポイント（`python -m app.main`）
+  - `app/__init__.py`: Flaskアプリ/SocketIO初期化
+  - `app/db.py`: DBユーティリティとクエリ
+  - `app/nfc.py`: NFC（pyscard）読み取り
+  - `app/background.py`: バックグラウンドスキャンスレッド
+  - `app/routes/api.py`: REST API（Blueprint）
+- `app_flask.py`: 互換ラッパー（既存運用向け）
+- `templates/index.html`: 操作用Web UI
 - `static/js/socket.io.js`: ローカル配備のSocket.IOクライアント
-- データベース: PostgreSQL（Docker推奨）
+- `docker-compose.yml`: PostgreSQL 起動用（ローカル）
+- `scripts/setup_pi.sh`: Raspberry Pi 初期構築の自動化
 
 アーキテクチャと処理ロジックの詳細は `ARCHITECTURE.md` を参照してください。
 
-## クイックスタート
+## クイックスタート（ローカル）
 ```bash
 # 依存: pcscd（PC/SC）、Docker（PostgreSQL）、Python3
 
@@ -36,13 +44,28 @@ docker run --name postgres-tool \
   -e POSTGRES_PASSWORD=app \
   -p 5432:5432 -d postgres:16
 
-# アプリ起動
-python app_flask.py
+# DB起動（Docker Compose）
+docker compose up -d
+
+# アプリ起動（新構成）
+python -m app.main
+# 互換: python app_flask.py でも可
 ```
 
 アクセス:
 - ローカル: http://127.0.0.1:8501
 - 同一LAN: http://[RaspberryPiのIP]:8501
+
+## まっさらな Raspberry Pi 構築（最短）
+```bash
+sudo apt update && sudo apt install -y git
+git clone https://github.com/denkoushi/tool-management-system.git
+cd tool-management-system
+bash scripts/setup_pi.sh
+source venv/bin/activate
+python -m app.main
+```
+問題が出た場合は `SETUP.md` の詳細手順を参照してください。
 
 ## 使い方（現場オペレーション）
 1. 画面の「スキャン開始」を押す
@@ -69,11 +92,14 @@ python app_flask.py
 詳細の設計・ロジック・拡張案は `ARCHITECTURE.md` を参照してください。
 
 ## ドキュメント
-- 初期セットアップ: `SETUP.md`
+- 初期セットアップ（詳細）: `SETUP.md`
 - オフライン対応: `OFFLINE_SETUP.md`
 - 自動起動（systemd/キオスク）: `AUTO_START.md`
 - アーキテクチャ/ロジック: `ARCHITECTURE.md`
 - 参考（実機ログ・フィールドノート）: `docs/RASPBERRY_PI_AUTO_START_SUCCESS.md`
+
+## .env（任意）
+`DB_...` などを上書きする場合は `.env` を作成してください（`.env.example` 参照）。
 
 ## 動作環境
 - Raspberry Pi OS（Pi 4で確認） / Python 3
@@ -82,4 +108,3 @@ python app_flask.py
 
 ## ライセンス
 MIT License
-

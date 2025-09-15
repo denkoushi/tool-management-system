@@ -18,7 +18,7 @@ curl -o static/js/socket.io.js \
 
 3) 再起動と確認
 ```bash
-python app_flask.py
+python -m app.main
 # ブラウザ: http://127.0.0.1:8501
 ```
 

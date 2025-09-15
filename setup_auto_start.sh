@@ -29,7 +29,7 @@ User=$USER_NAME
 Group=$USER_NAME
 WorkingDirectory=$PROJECT_DIR
 Environment=PATH=$PROJECT_DIR/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ExecStart=$PROJECT_DIR/venv/bin/python app_flask.py
+ExecStart=$PROJECT_DIR/venv/bin/python -m app.main
 Restart=always
 RestartSec=10
 StandardOutput=journal

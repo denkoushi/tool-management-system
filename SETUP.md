@@ -126,8 +126,9 @@ python3 -c "from smartcard.CardRequest import CardRequest; print('✅ pyscard正
 ## 🎯 5. アプリケーション起動・テスト
 
 ```bash
-# アプリケーション起動
-python app_flask.py
+# アプリケーション起動（新構成）
+python -m app.main
+# 互換: python app_flask.py でも可
 ```
 
 成功すると以下が表示：
@@ -248,7 +249,7 @@ Requires=docker.service
 Type=simple
 User=denkon5
 WorkingDirectory=/home/denkon5/tool-management-system
-ExecStart=/home/denkon5/tool-management-system/venv/bin/python app_flask.py
+ExecStart=/home/denkon5/tool-management-system/venv/bin/python -m app.main
 Restart=always
 RestartSec=10
 

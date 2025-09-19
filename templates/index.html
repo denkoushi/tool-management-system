@@ -708,33 +708,42 @@
         }
         
         // 貸出データ読み込み
+        function renderLoansData(data) {
+            if (!data) {
+                return;
+            }
+
+            const openTableBody = document.querySelector('#openLoansTable tbody');
+            const histTableBody = document.querySelector('#historyTable tbody');
+
+            if (openTableBody) {
+                openTableBody.innerHTML = '';
+                (data.open_loans || []).forEach(loan => {
+                    const row = openTableBody.insertRow();
+                    row.insertCell(0).textContent = loan.tool;
+                    row.insertCell(1).textContent = loan.borrower;
+                    const date = new Date(loan.loaned_at);
+                    row.insertCell(2).textContent = `${date.getMonth()+1}/${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2,'0')}`;
+                });
+            }
+
+            if (histTableBody) {
+                histTableBody.innerHTML = '';
+                (data.history || []).forEach(hist => {
+                    const row = histTableBody.insertRow();
+                    row.insertCell(0).textContent = hist.action;
+                    row.insertCell(1).textContent = hist.tool;
+                    row.insertCell(2).textContent = hist.borrower;
+                    const date = new Date(hist.returned_at || hist.loaned_at);
+                    row.insertCell(3).textContent = `${date.getMonth()+1}/${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2,'0')}`;
+                });
+            }
+        }
+
         function loadLoansData() {
             fetch('/api/loans')
                 .then(response => response.json())
-                .then(data => {
-                    // 貸出中テーブル
-                    const openTableBody = document.querySelector('#openLoansTable tbody');
-                    openTableBody.innerHTML = '';
-                    data.open_loans.forEach(loan => {
-                        const row = openTableBody.insertRow();
-                        row.insertCell(0).textContent = loan.tool;
-                        row.insertCell(1).textContent = loan.borrower;
-                        const date = new Date(loan.loaned_at);
-                        row.insertCell(2).textContent = `${date.getMonth()+1}/${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2,'0')}`;
-                    });
-                    
-                    // 履歴テーブル
-                    const histTableBody = document.querySelector('#historyTable tbody');
-                    histTableBody.innerHTML = '';
-                    data.history.forEach(hist => {
-                        const row = histTableBody.insertRow();
-                        row.insertCell(0).textContent = hist.action;
-                        row.insertCell(1).textContent = hist.tool;
-                        row.insertCell(2).textContent = hist.borrower;
-                        const date = new Date(hist.returned_at || hist.loaned_at);
-                        row.insertCell(3).textContent = `${date.getMonth()+1}/${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2,'0')}`;
-                    });
-                });
+                .then(renderLoansData);
         }
         
         // 手動スキャン（ユーザー登録用）
@@ -933,8 +942,14 @@
             const alertType = data.action === 'borrow' ? 'success' : 'info';
             showMessage('transactionResult', data.message, alertType);
             
-            // データ更新
-            loadLoansData();
+            if (data.open_loans && data.history) {
+                renderLoansData({
+                    open_loans: data.open_loans,
+                    history: data.history,
+                });
+            } else {
+                loadLoansData();
+            }
         });
         
         socket.on('state_reset', function(data) {

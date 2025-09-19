@@ -115,6 +115,8 @@ def scan_monitor(sock: SocketIO | None = None):
                                 time.sleep(3)
                                 scan_state["user_uid"] = ""
                                 scan_state["tool_uid"] = ""
+                                scan_state["last_scanned_uid"] = ""
+                                scan_state["last_scan_time"] = 0.0
                                 scan_state["message"] = (
                                     "📡 スキャン待機中... ユーザータグをかざしてください"
                                 )
@@ -141,4 +143,3 @@ def start_scan_thread(sock: SocketIO | None = None) -> threading.Thread:
     t = threading.Thread(target=scan_monitor, kwargs={"sock": sock}, daemon=True)
     t.start()
     return t
-

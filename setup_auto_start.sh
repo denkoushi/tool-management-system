@@ -152,4 +152,3 @@ echo "🛑 自動起動を停止する場合:"
 echo "   sudo systemctl disable tool-management.service"
 echo "   rm ~/.config/autostart/tool-management-browser.desktop"
 echo ""
-EOF

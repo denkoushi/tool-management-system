@@ -9,6 +9,8 @@ from . import socketio as socketio_ext
 from .config import SCAN_DEBOUNCE_SEC, SCAN_POLL_TIMEOUT_SEC
 from .db import (
     borrow_or_return,
+    fetch_open_loans,
+    fetch_recent_history,
     get_conn,
     insert_scan,
     name_of_tool,
@@ -85,6 +87,24 @@ def scan_monitor(sock: SocketIO | None = None):
                             action, info = borrow_or_return(
                                 conn, scan_state["user_uid"], scan_state["tool_uid"]
                             )
+                            open_loans = [
+                                {
+                                    "tool": row[0],
+                                    "borrower": row[1],
+                                    "loaned_at": row[2].isoformat(),
+                                }
+                                for row in fetch_open_loans(conn)
+                            ]
+                            history = [
+                                {
+                                    "action": row[0],
+                                    "tool": row[1],
+                                    "borrower": row[2],
+                                    "loaned_at": row[3].isoformat(),
+                                    "returned_at": row[4].isoformat() if row[4] else None,
+                                }
+                                for row in fetch_recent_history(conn)
+                            ]
                             if action == "borrow":
                                 message = (
                                     f"✅ 貸出：{name_of_tool(conn, scan_state['tool_uid'])} → "
@@ -106,6 +126,8 @@ def scan_monitor(sock: SocketIO | None = None):
                                     "tool_name": name_of_tool(conn, scan_state["tool_uid"]),
                                     "message": message,
                                     "action": action,
+                                    "open_loans": open_loans,
+                                    "history": history,
                                 },
                             )
 

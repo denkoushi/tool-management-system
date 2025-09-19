@@ -22,6 +22,8 @@ def start_scan():
     scan_state["active"] = True
     scan_state["user_uid"] = ""
     scan_state["tool_uid"] = ""
+    scan_state["last_scanned_uid"] = ""
+    scan_state["last_scan_time"] = 0.0
     scan_state["message"] = "📡 スキャン待機中... ユーザータグをかざしてください"
     print("🟢 自動スキャン開始")
     return jsonify({"status": "started", "message": scan_state["message"]})
@@ -39,6 +41,8 @@ def stop_scan():
 def reset_state():
     scan_state["user_uid"] = ""
     scan_state["tool_uid"] = ""
+    scan_state["last_scanned_uid"] = ""
+    scan_state["last_scan_time"] = 0.0
     scan_state["message"] = "🔄 リセット完了"
     print("🧹 状態リセット")
     return jsonify({"status": "reset"})

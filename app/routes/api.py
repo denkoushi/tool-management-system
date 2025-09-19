@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from datetime import datetime
-
 from flask import Blueprint, jsonify, request
 
 from ..background import scan_state
@@ -236,4 +234,3 @@ def check_tag():
     else:
         print("❌ タグ情報確認 タイムアウト")
         return jsonify({"uid": None, "status": "timeout"})
-

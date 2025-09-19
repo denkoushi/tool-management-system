@@ -232,4 +232,3 @@ echo "  サービス確認: sudo systemctl status tool-management.service"
 echo "  ログ確認: sudo journalctl -u tool-management.service -f"
 echo "  ヘルス確認: cat /var/log/tool-management/health.log"
 echo ""
-EOF
